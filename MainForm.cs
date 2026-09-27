@@ -46,7 +46,7 @@ namespace RankedDuelsCompanion
         readonly Label lblAccount = new Label(), lblAccountDetail = new Label(), lblFiles = new Label();
         readonly Label lblStatus = new Label(), lblStatusTime = new Label();
         readonly Button btnLogin, btnFolder, btnWebsite;
-        readonly CheckBox chkStartup = new CheckBox();
+        readonly CheckBox chkStartup = new CheckBox(), chkUpdates = new CheckBox();
         readonly LinkLabel linkUpdate = new LinkLabel(), linkUninstall = new LinkLabel();
         readonly ToolTip tips = new ToolTip();
 
@@ -111,6 +111,14 @@ namespace RankedDuelsCompanion
             chkStartup.CheckedChanged += (s, e) =>
             {
                 try { Install.StartsWithWindows = chkStartup.Checked; } catch { }
+            };
+            chkUpdates.Checked = !settings.UpdateCheckOff;
+            chkUpdates.CheckedChanged += async (s, e) =>
+            {
+                settings.UpdateCheckOff = !chkUpdates.Checked;
+                settings.Save();
+                if (settings.UpdateCheckOff) linkUpdate.Visible = false;
+                else await CheckForUpdate();
             };
             linkUpdate.LinkClicked += (s, e) => OpenUrl(Api.Website + "/download/RankedDuelsCompanion.exe");
             linkUninstall.LinkClicked += (s, e) =>
@@ -458,6 +466,7 @@ namespace RankedDuelsCompanion
 
         async Task CheckForUpdate()
         {
+            if (settings.UpdateCheckOff) return; // the player turned it off: no request at all
             var latest = await Api.LatestVersion();
             if (latest != null && new Version(latest) > new Version(Install.Version))
             {
@@ -628,8 +637,14 @@ namespace RankedDuelsCompanion
             chkStartup.AutoSize = true;
             chkStartup.ForeColor = Muted;
             chkStartup.Anchor = AnchorStyles.Right;
+            chkUpdates.Text = "Check for updates";
+            chkUpdates.AutoSize = true;
+            chkUpdates.ForeColor = Muted;
+            chkUpdates.Anchor = AnchorStyles.Right;
+            tips.SetToolTip(chkUpdates, "Asks rankedduels.io for the newest version number at start-up and every 12 hours. Nothing else is sent.");
             row.Controls.Add(btnWebsite, 0, 0);
             row.Controls.Add(chkStartup, 1, 0);
+            row.Controls.Add(chkUpdates, 1, 1);
             return row;
         }
 

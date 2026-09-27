@@ -23,6 +23,7 @@ namespace RankedDuelsCompanion
         public string LastResult { get; set; }
         public bool Installed { get; set; }                // first-run setup (start with Windows) done
         public bool TrayHintShown { get; set; }
+        public bool UpdateCheckOff { get; set; }           // "Check for updates" unticked: never ask the website for the newest version
 
         [ScriptIgnore] // never write the plain token to disk
         public string Session

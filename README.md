@@ -13,7 +13,9 @@ The whole app is in this repository. In short:
 - **Sends that file** to the Ranked Duels server (`/upload`), which picks out your duels. ([Api.cs](Api.cs))
 - **Logs you in with Battle.net** in your normal browser. The app never sees your Battle.net password. It only receives a Ranked Duels login token, which it stores encrypted with Windows' own protection (DPAPI) in `%APPDATA%\Ranked Duels Companion\settings.json`. ([Settings.cs](Settings.cs))
 - **Installs itself** for your Windows user only (no admin rights): `%LOCALAPPDATA%\Programs\Ranked Duels Companion`, a Start menu shortcut, an entry in *Apps & features* and, if you want, a start-with-Windows entry. ([Install.cs](Install.cs))
-- **Checks for updates** by reading `https://rankedduels.io/download/version.txt`. It never downloads or runs anything by itself: it only shows an "Update available" link.
+- **Checks for updates** by reading `https://rankedduels.io/download/version.txt` at start-up and every 12 hours. It never downloads or runs anything by itself: it only shows an "Update available" link. Untick **Check for updates** in the app window and it never makes this request.
+
+Nothing leaves your PC until you log in, and then only the file above. Full details: [privacy statement](https://rankedduels.io/privacy).
 
 ## Is the download really built from this code?
 
@@ -27,7 +29,7 @@ It confirms the file was built by this repository's workflow, from a specific co
 
 ## "Windows protected your PC"
 
-The app isn't code-signed yet, so Windows SmartScreen warns about an unknown publisher. Click **More info → Run anyway**. We plan to get free code signing for open-source projects, which removes the warning.
+The app isn't code-signed yet, so Windows SmartScreen warns about an unknown publisher. Click **More info → Run anyway**. We're applying for free code signing for open-source projects, which removes the warning. See our [code signing policy](https://rankedduels.io/code-signing).
 
 ## Build it yourself
 

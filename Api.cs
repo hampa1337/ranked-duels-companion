@@ -25,7 +25,7 @@ namespace RankedDuelsCompanion
     // Talks to the same Supabase Edge Functions the website uses.
     static class Api
     {
-        public const string Website = "https://ranked-duels.rankedduels.workers.dev";
+        public const string Website = "https://rankedduels.io";
         const string FunctionsUrl = "https://yodmkzrzovmxftrwjhmw.supabase.co/functions/v1";
         const string SessionHeader = "x-rd-session";
 
