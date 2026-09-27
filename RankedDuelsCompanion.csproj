@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- .NET Framework 4.8 ships with Windows 10/11, so players get one small
+       .exe with nothing else to install. Build: dotnet build -c Release -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>RankedDuelsCompanion</AssemblyName>
+    <RootNamespace>RankedDuelsCompanion</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Version>1.1.1</Version>
+    <Product>Ranked Duels Companion</Product>
+    <AssemblyTitle>Ranked Duels Companion</AssemblyTitle>
+    <Company>Hampa1337</Company>
+    <Copyright>Hampa1337</Copyright>
+    <Description>Uploads your Ranked Duels duels automatically</Description>
+    <DebugType>none</DebugType>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
+    <EmbeddedResource Include="app.ico" LogicalName="app.ico" />
+  </ItemGroup>
+
+</Project>
