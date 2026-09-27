@@ -24,6 +24,7 @@ namespace RankedDuelsCompanion
         public bool Installed { get; set; }                // first-run setup (start with Windows) done
         public bool TrayHintShown { get; set; }
         public bool UpdateCheckOff { get; set; }           // "Check for updates" unticked: never ask the website for the newest version
+        public bool AutoUpdateOff { get; set; }            // "Install updates automatically" unticked: only show the update link
 
         [ScriptIgnore] // never write the plain token to disk
         public string Session

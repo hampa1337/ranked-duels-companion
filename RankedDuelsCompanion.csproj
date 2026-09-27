@@ -11,7 +11,7 @@
     <RootNamespace>RankedDuelsCompanion</RootNamespace>
     <ApplicationIcon>app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.1.2</Version>
+    <Version>1.1.3</Version>
     <Product>Ranked Duels Companion</Product>
     <AssemblyTitle>Ranked Duels Companion</AssemblyTitle>
     <Company>Hampa1337</Company>

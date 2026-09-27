@@ -46,7 +46,8 @@ namespace RankedDuelsCompanion
         readonly Label lblAccount = new Label(), lblAccountDetail = new Label(), lblFiles = new Label();
         readonly Label lblStatus = new Label(), lblStatusTime = new Label();
         readonly Button btnLogin, btnFolder, btnWebsite;
-        readonly CheckBox chkStartup = new CheckBox(), chkUpdates = new CheckBox();
+        readonly CheckBox chkStartup = new CheckBox(), chkUpdates = new CheckBox(), chkAutoUpdate = new CheckBox();
+        bool updating;
         readonly LinkLabel linkUpdate = new LinkLabel(), linkUninstall = new LinkLabel();
         readonly ToolTip tips = new ToolTip();
 
@@ -113,14 +114,27 @@ namespace RankedDuelsCompanion
                 try { Install.StartsWithWindows = chkStartup.Checked; } catch { }
             };
             chkUpdates.Checked = !settings.UpdateCheckOff;
+            chkAutoUpdate.Checked = !settings.AutoUpdateOff;
+            chkAutoUpdate.Enabled = chkUpdates.Checked;
             chkUpdates.CheckedChanged += async (s, e) =>
             {
                 settings.UpdateCheckOff = !chkUpdates.Checked;
                 settings.Save();
+                chkAutoUpdate.Enabled = chkUpdates.Checked;
                 if (settings.UpdateCheckOff) linkUpdate.Visible = false;
                 else await CheckForUpdate();
             };
-            linkUpdate.LinkClicked += (s, e) => OpenUrl(Api.Website + "/download/RankedDuelsCompanion.exe");
+            chkAutoUpdate.CheckedChanged += async (s, e) =>
+            {
+                settings.AutoUpdateOff = !chkAutoUpdate.Checked;
+                settings.Save();
+                if (!settings.AutoUpdateOff) await CheckForUpdate();
+            };
+            linkUpdate.LinkClicked += async (s, e) =>
+            {
+                if (updateFailed) OpenUrl(Api.Website + "/download/RankedDuelsCompanion.exe");
+                else if (latestVersion != null) await InstallUpdate(latestVersion, minimized: false);
+            };
             linkUninstall.LinkClicked += (s, e) =>
             {
                 if (Install.Uninstall(interactive: true)) Quit();
@@ -466,14 +480,32 @@ namespace RankedDuelsCompanion
 
         async Task CheckForUpdate()
         {
-            if (settings.UpdateCheckOff) return; // the player turned it off: no request at all
+            if (settings.UpdateCheckOff || updating) return; // the player turned it off: no request at all
             var latest = await Api.LatestVersion();
-            if (latest != null && new Version(latest) > new Version(Install.Version))
-            {
-                linkUpdate.Text = $"Update available (v{latest}) \u2014 download";
-                linkUpdate.Visible = true;
-            }
+            if (latest == null || new Version(latest) <= new Version(Install.Version)) return;
+            latestVersion = latest;
+            linkUpdate.Text = $"Update available (v{latest}) \u2014 install";
+            linkUpdate.Visible = true;
+            if (!settings.AutoUpdateOff) await InstallUpdate(latest, minimized: !Visible);
         }
+
+        string latestVersion;
+
+        // Downloads and checks the new version, then starts it; it quits us
+        // and takes our place. Waits for an upload in progress to finish first.
+        async Task InstallUpdate(string version, bool minimized)
+        {
+            if (updating) return;
+            updating = true;
+            linkUpdate.Text = $"Installing v{version}\u2026";
+            for (int i = 0; syncing && i < 120; i++) await Task.Delay(500);
+            if (await Updater.DownloadAndStart(version, minimized)) return; // we'll be asked to quit shortly
+            updating = false;
+            updateFailed = true; // the link now falls back to downloading from the website
+            linkUpdate.Text = $"Update available (v{version}) \u2014 download";
+        }
+
+        bool updateFailed;
 
         void SetupTray()
         {
@@ -645,6 +677,12 @@ namespace RankedDuelsCompanion
             row.Controls.Add(btnWebsite, 0, 0);
             row.Controls.Add(chkStartup, 1, 0);
             row.Controls.Add(chkUpdates, 1, 1);
+            chkAutoUpdate.Text = "Install updates automatically";
+            chkAutoUpdate.AutoSize = true;
+            chkAutoUpdate.ForeColor = Muted;
+            chkAutoUpdate.Anchor = AnchorStyles.Right;
+            tips.SetToolTip(chkAutoUpdate, "Downloads new versions from the app's GitHub releases, checks them and restarts the app.");
+            row.Controls.Add(chkAutoUpdate, 1, 2);
             return row;
         }
 

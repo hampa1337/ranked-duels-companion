@@ -33,7 +33,7 @@ namespace RankedDuelsCompanion
                 AskRunningCopyToQuit();
                 try
                 {
-                    Install.InstallSelf();
+                    Install.InstallSelf(minimized: args.Contains("--minimized"));
                 }
                 catch (Exception ex)
                 {

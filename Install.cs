@@ -35,7 +35,8 @@ namespace RankedDuelsCompanion
             string.Equals(Path.GetFullPath(Application.ExecutablePath), Path.GetFullPath(Exe),
                 StringComparison.OrdinalIgnoreCase);
 
-        public static void InstallSelf()
+        // minimized: a background self-update, so the new copy stays in the tray.
+        public static void InstallSelf(bool minimized = false)
         {
             Directory.CreateDirectory(Dir);
             File.Copy(Application.ExecutablePath, Exe, overwrite: true);
@@ -43,7 +44,7 @@ namespace RankedDuelsCompanion
             try { CreateShortcut(); } catch { /* nice to have */ }
             try { RegisterUninstall(); } catch { /* nice to have */ }
 
-            Process.Start(new ProcessStartInfo(Exe) { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(Exe, minimized ? "--minimized" : "") { UseShellExecute = true });
         }
 
         static void CreateShortcut()

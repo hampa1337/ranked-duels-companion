@@ -13,7 +13,8 @@ The whole app is in this repository. In short:
 - **Sends that file** to the Ranked Duels server (`/upload`), which picks out your duels. ([Api.cs](Api.cs))
 - **Logs you in with Battle.net** in your normal browser. The app never sees your Battle.net password. It only receives a Ranked Duels login token, which it stores encrypted with Windows' own protection (DPAPI) in `%APPDATA%\Ranked Duels Companion\settings.json`. ([Settings.cs](Settings.cs))
 - **Installs itself** for your Windows user only (no admin rights): `%LOCALAPPDATA%\Programs\Ranked Duels Companion`, a Start menu shortcut, an entry in *Apps & features* and, if you want, a start-with-Windows entry. ([Install.cs](Install.cs))
-- **Checks for updates** by reading `https://rankedduels.io/download/version.txt` at start-up and every 12 hours. It never downloads or runs anything by itself: it only shows an "Update available" link. Untick **Check for updates** in the app window and it never makes this request.
+- **Checks for updates** by reading `https://rankedduels.io/download/version.txt` at start-up and every 12 hours. Untick **Check for updates** in the app window and it never makes this request.
+- **Updates itself** when there's a new version: it downloads the `.exe` from this repository's [releases](../../releases), checks it against the release's `SHA256SUMS.txt` and its version number, then starts it, and the new copy replaces the old one. Untick **Install updates automatically** and it only shows an "Update available" link instead. ([Updater.cs](Updater.cs))
 
 Nothing leaves your PC until you log in, and then only the file above. Full details: [privacy statement](https://rankedduels.io/privacy).
 
